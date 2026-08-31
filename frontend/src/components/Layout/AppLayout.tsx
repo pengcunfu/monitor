@@ -69,19 +69,19 @@ export default function AppLayout() {
       <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed} theme="dark">
         <div
           style={{
-            height: 48,
+            minHeight: 48,
             margin: 12,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            textAlign: 'center',
             color: '#fff',
-            fontSize: collapsed ? 14 : 16,
+            fontSize: collapsed ? 14 : 13,
             fontWeight: 600,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
+            lineHeight: 1.4,
           }}
         >
-          {collapsed ? '⚡' : '⚡ Linux 监控'}
+          {collapsed ? '⚡' : '⚡ 熔岩网络安全事件应急处置系统'}
         </div>
         <Menu
           theme="dark"

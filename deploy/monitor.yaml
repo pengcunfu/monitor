@@ -1,4 +1,4 @@
-# Linux 系统监控平台 生产配置示例
+# 熔岩网络安全事件应急处置系统 生产配置示例
 # 复制到 /etc/monitor/monitor.yaml 并按需修改
 
 server:

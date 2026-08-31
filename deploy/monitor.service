@@ -1,4 +1,4 @@
-# Linux 系统监控平台 systemd 服务单元
+# 熔岩网络安全事件应急处置系统 systemd 服务单元
 # 安装：
 #   sudo cp deploy/monitor.service /etc/systemd/system/
 #   sudo cp deploy/monitor.yaml /etc/monitor/monitor.yaml   # 修改配置
@@ -7,7 +7,7 @@
 #   sudo systemctl enable --now monitor
 
 [Unit]
-Description=Linux System Monitor Platform
+Description=Lava Network Security Incident Emergency Response System
 Documentation=file:///opt/monitor/README.md
 After=network.target
 

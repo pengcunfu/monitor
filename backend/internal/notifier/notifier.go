@@ -62,7 +62,7 @@ func (m *Manager) SendAlert(ev *model.AlertEvent, rule *model.AlertRule, phase s
 		return
 	}
 	msg := &Message{
-		Title:    fmt.Sprintf("[监控平台][%s] %s - %s", ev.Severity, phase, ev.RuleName),
+		Title:    fmt.Sprintf("[熔岩网络安全事件应急处置系统][%s] %s - %s", ev.Severity, phase, ev.RuleName),
 		Content:  ev.Message,
 		Severity: ev.Severity,
 		Time:     time.Now().UnixMilli(),
@@ -103,7 +103,7 @@ func (m *Manager) TestChannel(ctx context.Context, id uint) error {
 		return err
 	}
 	msg := &Message{
-		Title:    "[监控平台] 测试通知",
+		Title:    "[熔岩网络安全事件应急处置系统] 测试通知",
 		Content:  fmt.Sprintf("这是一条测试通知。\n时间：%s\n渠道：%s", time.Now().Format("2006-01-02 15:04:05"), ch.Name),
 		Severity: model.SeverityWarning,
 		Time:     time.Now().UnixMilli(),

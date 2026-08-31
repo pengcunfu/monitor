@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Linux 系统监控平台 一键构建脚本
+# 熔岩网络安全事件应急处置系统 一键构建脚本
 # 用法：bash scripts/build.sh [版本号]
 # 产出：bin/monitor-linux-amd64 与 monitor-linux-amd64.tar.gz
 set -euo pipefail

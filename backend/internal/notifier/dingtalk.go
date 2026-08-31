@@ -51,7 +51,7 @@ func (n *dingtalkNotifier) Send(ctx context.Context, msg *Message) error {
 	payload := map[string]interface{}{
 		"msgtype": "markdown",
 		"markdown": map[string]string{
-			"title": fmt.Sprintf("[监控平台] %s", msg.Title),
+			"title": fmt.Sprintf("[熔岩网络安全事件应急处置系统] %s", msg.Title),
 			"text":  fmt.Sprintf("### %s\n\n%s", msg.Title, msg.Content),
 		},
 	}

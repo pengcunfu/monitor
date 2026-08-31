@@ -42,7 +42,7 @@ export default function Login() {
     >
       <Card style={{ width: 380, boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
         <Typography.Title level={3} style={{ textAlign: 'center', marginBottom: 4 }}>
-          ⚡ Linux 系统监控平台
+          ⚡ 熔岩网络安全事件应急处置系统
         </Typography.Title>
         <Typography.Paragraph type="secondary" style={{ textAlign: 'center' }}>
           请登录以继续
