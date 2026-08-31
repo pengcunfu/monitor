@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@ant-design/icons": "^6.3.2",
+    "antd": "^6.6.2",
+    "dayjs": "^1.11.23",
+    "echarts": "^6.1.0",
+    "echarts-for-react": "^3.0.6",
+    "react-router-dom": "^7.18.3",
+    "swr": "^2.5.1",
+    "zustand": "^5.0.15"
+  }
+}

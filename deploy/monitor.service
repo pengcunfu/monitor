@@ -1,0 +1,31 @@
+# Linux 系统监控平台 systemd 服务单元
+# 安装：
+#   sudo cp deploy/monitor.service /etc/systemd/system/
+#   sudo cp deploy/monitor.yaml /etc/monitor/monitor.yaml   # 修改配置
+#   sudo mkdir -p /opt/monitor/data && sudo cp bin/monitor-linux-amd64 /opt/monitor/monitor
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now monitor
+
+[Unit]
+Description=Linux System Monitor Platform
+Documentation=file:///opt/monitor/README.md
+After=network.target
+
+[Service]
+Type=simple
+# 建议使用专用低权限账号；普通用户即可读取 /proc 与 systemd D-Bus
+User=monitor
+Group=monitor
+WorkingDirectory=/opt/monitor
+ExecStart=/opt/monitor/monitor -c /etc/monitor/monitor.yaml
+Restart=on-failure
+RestartSec=5
+Environment=GIN_MODE=release
+# SQLite WAL 与网络连接需要较多文件描述符
+LimitNOFILE=65535
+NoNewPrivileges=true
+PrivateTmp=true
+# 采集 systemd 服务状态需访问 system bus，普通用户默认可用
+
+[Install]
+WantedBy=multi-user.target

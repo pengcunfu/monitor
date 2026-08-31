@@ -1,0 +1,22 @@
+# Linux 系统监控平台 配置示例
+# 复制为 monitor.yaml 后按需修改
+
+server:
+  # HTTP 监听地址
+  addr: ":8080"
+  # SQLite 数据库文件路径
+  db_path: "monitor.db"
+  # JWT 签名密钥（生产环境务必修改）
+  jwt_secret: "please-change-me"
+  # JWT 有效期（小时）
+  jwt_expire_h: 72
+
+collector:
+  # 主指标采集周期（秒）：CPU/内存/负载/磁盘/网络
+  interval_sec: 10
+  # 进程采样周期（秒）
+  process_interval_sec: 30
+  # systemd 服务状态采集周期（秒）
+  service_interval_sec: 30
+  # 保留的进程 top N
+  process_top_n: 20
