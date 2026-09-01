@@ -4,6 +4,7 @@ package collector
 
 import (
 	"log"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -28,6 +29,16 @@ func (c *Collector) collectServices() {
 		return
 	}
 
+	// 开机自启集合（enabled 的 unit 文件名 → true）
+	enabledUnits := map[string]bool{}
+	if files, ferr := conn.ListUnitFiles(); ferr == nil {
+		for _, f := range files {
+			if f.Type == "enabled" {
+				enabledUnits[filepath.Base(f.Path)] = true
+			}
+		}
+	}
+
 	now := time.Now().UnixMilli()
 	var states []model.ServiceState
 	for _, u := range units {
@@ -42,6 +53,7 @@ func (c *Collector) collectServices() {
 			ActiveState: u.ActiveState,
 			SubState:    u.SubState,
 			IsActive:    u.ActiveState == "active",
+			Enabled:     enabledUnits[u.Name],
 		})
 	}
 	if len(states) == 0 {

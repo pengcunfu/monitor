@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"monitor/internal/config"
+	"monitor/internal/manager"
 	"monitor/internal/notifier"
 	"monitor/internal/store"
 	"monitor/internal/ws"
@@ -18,6 +19,7 @@ type API struct {
 	cfg   *config.Config
 	hub   *ws.Hub
 	mgr   *notifier.Manager
+	ops   *manager.Manager
 
 	alertEngine AlertEngine
 }
@@ -30,8 +32,8 @@ type AlertEngine interface {
 }
 
 // New 构建 gin 引擎并注册全部路由。
-func New(st *store.Store, cfg *config.Config, hub *ws.Hub, engine AlertEngine, mgr *notifier.Manager) *gin.Engine {
-	a := &API{store: st, cfg: cfg, hub: hub, alertEngine: engine, mgr: mgr}
+func New(st *store.Store, cfg *config.Config, hub *ws.Hub, engine AlertEngine, mgr *notifier.Manager, ops *manager.Manager) *gin.Engine {
+	a := &API{store: st, cfg: cfg, hub: hub, alertEngine: engine, mgr: mgr, ops: ops}
 
 	r := gin.New()
 	r.Use(gin.Logger(), gin.Recovery(), a.CORS())
@@ -88,6 +90,20 @@ func New(st *store.Store, cfg *config.Config, hub *ws.Hub, engine AlertEngine, m
 			auth.GET("/services/names", a.serviceNames)
 			auth.GET("/settings", a.settingGet)
 			auth.PUT("/settings", a.settingUpdate)
+			auth.POST("/settings/smtp/test", a.settingSMTPTest)
+
+			// P8 进程/服务管理（仅管理员）
+			auth.GET("/capabilities", a.capabilities)
+			admin := auth.Group("", a.adminOnly())
+			{
+				admin.POST("/process/:pid/kill", a.processKill)
+				admin.POST("/process/:pid/restart", a.processRestart)
+				admin.POST("/services/:name/start", a.serviceStart)
+				admin.POST("/services/:name/stop", a.serviceStop)
+				admin.POST("/services/:name/restart", a.serviceRestart)
+				admin.POST("/services/:name/enable", a.serviceEnable)
+				admin.POST("/services/:name/disable", a.serviceDisable)
+			}
 		}
 	}
 

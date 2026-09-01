@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { App, Button, Card, Form, Input, Typography } from 'antd'
-import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import { LockOutlined, ThunderboltFilled, UserOutlined } from '@ant-design/icons'
 import { login } from '../api/auth'
 import { useAuthStore } from '../store/auth'
 
@@ -37,12 +37,13 @@ export default function Login() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #1f3b73 0%, #1677ff 100%)',
+        background: '#ffffff',
       }}
     >
       <Card style={{ width: 380, boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
         <Typography.Title level={3} style={{ textAlign: 'center', marginBottom: 4 }}>
-          ⚡ 熔岩网络安全事件应急处置系统
+          <ThunderboltFilled style={{ color: '#1677ff', marginRight: 8 }} />
+          熔岩网络安全事件应急处置系统
         </Typography.Title>
         <Typography.Paragraph type="secondary" style={{ textAlign: 'center' }}>
           请登录以继续

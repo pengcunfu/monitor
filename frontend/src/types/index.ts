@@ -100,6 +100,7 @@ export interface ServiceState {
   active_state: string
   sub_state: string
   is_active: boolean
+  enabled: boolean
   main_pid: number
   exit_code: number
 }

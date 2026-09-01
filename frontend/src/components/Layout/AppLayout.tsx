@@ -13,6 +13,7 @@ import {
   LogoutOutlined,
   NotificationOutlined,
   SettingOutlined,
+  ThunderboltFilled,
   UserOutlined,
 } from '@ant-design/icons'
 import { changePassword } from '../../api/auth'
@@ -81,7 +82,14 @@ export default function AppLayout() {
             lineHeight: 1.4,
           }}
         >
-          {collapsed ? '⚡' : '⚡ 熔岩网络安全事件应急处置系统'}
+          {collapsed ? (
+            <ThunderboltFilled style={{ fontSize: 20 }} />
+          ) : (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <ThunderboltFilled style={{ fontSize: 16 }} />
+              熔岩网络安全事件应急处置系统
+            </span>
+          )}
         </div>
         <Menu
           theme="dark"

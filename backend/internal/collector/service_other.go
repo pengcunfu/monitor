@@ -1,6 +1,6 @@
-//go:build !linux
+//go:build !linux && !windows
 
 package collector
 
-// collectServices 非 Linux 平台不采集 systemd 服务状态。
+// collectServices 非 Linux/Windows 平台（如 macOS）暂不采集系统服务状态。
 func (c *Collector) collectServices() {}

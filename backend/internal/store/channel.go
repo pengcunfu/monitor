@@ -43,6 +43,19 @@ func (s *Store) DeleteChannel(id uint) error {
 	return s.db.Delete(&model.NotificationChannel{}, id).Error
 }
 
+// FindChannelByNameType 按名称与类型查询渠道（用于系统设置页 upsert 内置 SMTP 渠道）。
+func (s *Store) FindChannelByNameType(name, typ string) (*model.NotificationChannel, error) {
+	var c model.NotificationChannel
+	err := s.db.Where("name = ? AND type = ?", name, typ).First(&c).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &c, nil
+}
+
 // ListEnabledChannels 返回启用中的渠道（通知管理器缓存用）。
 func (s *Store) ListEnabledChannels() ([]model.NotificationChannel, error) {
 	var list []model.NotificationChannel

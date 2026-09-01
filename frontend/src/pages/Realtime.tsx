@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
+import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons'
 import { Card, Col, Row } from 'antd'
 import { useRealtime } from '../hooks/useRealtime'
 import BaseChart from '../components/charts/BaseChart'
@@ -102,7 +103,11 @@ export default function Realtime() {
               .filter((n) => n.rx_bps > 0 || n.tx_bps > 0)
               .map((n) => (
                 <div key={n.name} style={{ fontSize: 13, color: '#666' }}>
-                  {n.name}：↓{formatSpeed(n.rx_bps)} ↑{formatSpeed(n.tx_bps)}
+                  {n.name}：
+                  <ArrowDownOutlined style={{ color: '#13c2c2', fontSize: 10 }} />
+                  {formatSpeed(n.rx_bps)}{' '}
+                  <ArrowUpOutlined style={{ color: '#52c41a', fontSize: 10 }} />
+                  {formatSpeed(n.tx_bps)}
                 </div>
               ))}
           </Card>

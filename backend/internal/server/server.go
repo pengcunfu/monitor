@@ -13,6 +13,7 @@ import (
 	"monitor/internal/api"
 	"monitor/internal/collector"
 	"monitor/internal/config"
+	"monitor/internal/manager"
 	"monitor/internal/notifier"
 	"monitor/internal/store"
 	"monitor/internal/ws"
@@ -62,7 +63,7 @@ func (s *Server) Run() error {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	router := api.New(s.st, s.cfg, s.hub, s.engine, s.mgr)
+	router := api.New(s.st, s.cfg, s.hub, s.engine, s.mgr, manager.New())
 
 	// 启动采集器与规则自动刷新（后台运行，随进程退出）
 	collectCtx, stopCollect := context.WithCancel(context.Background())

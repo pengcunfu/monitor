@@ -29,14 +29,31 @@
 | GET | `/process/current?top=&sort=cpu\|mem` | 最新一轮 top N 进程 |
 | GET | `/process/history?name=&from=&to=` | 指定进程历史 → `{cpu:[], mem:[]}` |
 | GET | `/process/names` | 进程名列表 |
+| POST | `/process/:pid/kill` | 结束进程（仅 admin）→ `{pid, name, action}` |
+| POST | `/process/:pid/restart` | 重启进程（仅 admin）→ `{pid, name, exe, new_pid, action}` |
 
-## 服务（Linux）
+## 服务（Linux / Windows）
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
 | GET | `/services?state=` | 最新服务状态，可按 `active/inactive/failed` 过滤 |
 | GET | `/services/history?name=&from=&to=` | 服务状态变化历史 |
 | GET | `/services/names` | 服务名列表 |
+| POST | `/services/:name/start` | 启动服务（仅 admin） |
+| POST | `/services/:name/stop` | 停止服务（仅 admin） |
+| POST | `/services/:name/restart` | 重启服务（仅 admin） |
+| POST | `/services/:name/enable` | 开启开机自启（仅 admin） |
+| POST | `/services/:name/disable` | 关闭开机自启（仅 admin） |
+
+服务状态 `active_state` 归一化：`active/inactive/activating/deactivating/paused/failed`；`enabled` 表示开机自启。
+
+## 能力声明
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| GET | `/capabilities` | 当前平台管理能力 → `{platform, process_manage, service_manage}`，前端据此隐藏不支持的按钮 |
+
+管理操作错误码：`403` 权限不足/非管理员、`404` 目标不存在、`409` 状态冲突（如启动被禁用服务、单元无 [Install] 段）、`501` 当前平台不支持。
 
 ## 告警规则
 
@@ -104,10 +121,29 @@
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
-| GET | `/settings` | 全部设置 |
-| PUT | `/settings` | 批量更新，body `{key: value}` |
+| GET | `/settings` | 全部设置（含 `smtp` 邮件配置，密码脱敏为 `***`） |
+| PUT | `/settings` | 批量更新，body `{key: value}`；含 `smtp` 时自动同步内置「邮件告警」通知渠道 |
+| POST | `/settings/smtp/test` | 用提交的 SMTP 配置发送测试邮件，body `{smtp: {...}}`（未保存也可测试） |
 
 设置 key：`collect_interval_sec` `process_interval_sec` `service_interval_sec` `process_top_n` `snapshot_retain_days` `process_retain_days` `service_retain_days` `alert_retain_days` `notify_log_retain_days`
+
+邮件 SMTP 配置（`smtp`）：
+
+```json
+{
+  "smtp": {
+    "host": "smtp.qq.com",
+    "port": 465,
+    "user": "发件邮箱账号",
+    "password": "授权码/密码（留空或 *** 表示不修改）",
+    "from": "发件人邮箱",
+    "to": ["收件人1", "收件人2"],
+    "tls": true,
+    "insecure_skip_verify": false,
+    "enabled": true
+  }
+}
+```
 
 ## WebSocket
 

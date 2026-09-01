@@ -92,6 +92,26 @@ func (m *Manager) SendToChannels(ctx context.Context, ids []uint, msg *Message, 
 	}
 }
 
+// TestSMTPConfig 用给定 SMTP 配置（未入库）发送测试消息，供系统设置页「测试发送」调用。
+func (m *Manager) TestSMTPConfig(ctx context.Context, cfg map[string]interface{}) error {
+	var j model.JSON
+	if err := j.Set(cfg); err != nil {
+		return fmt.Errorf("SMTP 配置格式错误: %w", err)
+	}
+	ch := &model.NotificationChannel{Type: model.ChannelSMTP, ConfigJSON: j}
+	n, err := buildNotifier(ch)
+	if err != nil {
+		return err
+	}
+	msg := &Message{
+		Title:    "[熔岩网络安全事件应急处置系统] SMTP 配置测试",
+		Content:  fmt.Sprintf("邮件告警配置测试成功。\n时间：%s", time.Now().Format("2006-01-02 15:04:05")),
+		Severity: model.SeverityWarning,
+		Time:     time.Now().UnixMilli(),
+	}
+	return n.Send(ctx, msg)
+}
+
 // TestChannel 向单个渠道发送测试消息（供前端「测试」按钮调用）。
 func (m *Manager) TestChannel(ctx context.Context, id uint) error {
 	ch, err := m.st.GetChannel(id)

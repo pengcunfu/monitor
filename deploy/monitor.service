@@ -13,7 +13,11 @@ After=network.target
 
 [Service]
 Type=simple
-# 建议使用专用低权限账号；普通用户即可读取 /proc 与 systemd D-Bus
+# 建议使用专用低权限账号；普通用户即可读取 /proc 与 systemd D-Bus。
+# 注意：若需启用「进程管理（kill/重启）+ 服务管理（start/stop/restart/enable/disable）」，
+# 进程管理要求与目标进程同权限（通常需 root），systemd StartUnit/EnableUnitFiles 也需要更高
+# D-Bus 策略权限——届时请将 User/Group 改为 root（或为 monitor 配置 polkit/systemd 授权）。
+# 默认低权限运行仅支持只读监控，管理操作会返回 403 权限不足。
 User=monitor
 Group=monitor
 WorkingDirectory=/opt/monitor

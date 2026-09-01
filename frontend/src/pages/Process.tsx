@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Button, Card, Drawer, Space, Table, Tag } from 'antd'
+import { App, Button, Card, Drawer, Popconfirm, Space, Table, Tag } from 'antd'
 import useSWR from 'swr'
-import { listProcesses, processHistory } from '../api/process'
+import { killProcess, listProcesses, processHistory, restartProcess } from '../api/process'
 import LineChart from '../components/charts/LineChart'
+import { useAuthStore } from '../store/auth'
 import type { ProcessSample } from '../types'
 import { formatBytes, formatTime } from '../utils/format'
 
@@ -14,14 +15,37 @@ const STATE_COLORS: Record<string, string> = {
   T: 'orange',
 }
 
-// Process 进程监控页：top N 进程 + 单个进程历史曲线。
+// Process 进程监控页：top N 进程 + 单个进程历史曲线 + 管理操作（仅管理员）。
 export default function Process() {
   const [sort, setSort] = useState<'cpu' | 'mem'>('cpu')
   const [detail, setDetail] = useState<{ name: string; pid: number } | null>(null)
+  const { message } = App.useApp()
+  const user = useAuthStore((s) => s.user)
+  const isAdmin = user?.role === 'admin'
 
-  const { data, isLoading } = useSWR(['/process', sort], () => listProcesses(20, sort), {
+  const { data, isLoading, mutate } = useSWR(['/process', sort], () => listProcesses(20, sort), {
     refreshInterval: 10000,
   })
+
+  const onKill = async (r: ProcessSample) => {
+    try {
+      const res = await killProcess(r.pid)
+      message.success(`已结束进程 ${res.name || r.pid}`)
+      mutate()
+    } catch (e: any) {
+      message.error(e.message || '操作失败')
+    }
+  }
+
+  const onRestart = async (r: ProcessSample) => {
+    try {
+      const res = await restartProcess(r.pid)
+      message.success(`已重启 ${res.name || r.pid}（新 PID ${res.new_pid}）`)
+      mutate()
+    } catch (e: any) {
+      message.error(e.message || '操作失败')
+    }
+  }
   const { data: his } = useSWR(
     detail ? ['/process/history', detail.name] : null,
     () => processHistory(detail!.name, Date.now() - 24 * 3600_000, Date.now()),
@@ -59,11 +83,25 @@ export default function Process() {
     {
       title: '操作',
       key: 'action',
-      width: 90,
+      width: isAdmin ? 170 : 90,
       render: (_: any, r: ProcessSample) => (
-        <Button size="small" onClick={() => setDetail({ name: r.name || `pid-${r.pid}`, pid: r.pid })}>
-          历史
-        </Button>
+        <Space size={4}>
+          <Button size="small" onClick={() => setDetail({ name: r.name || `pid-${r.pid}`, pid: r.pid })}>
+            历史
+          </Button>
+          {isAdmin && (
+            <>
+              <Popconfirm title={`确定结束进程 ${r.name || r.pid}？`} okText="结束" cancelText="取消" onConfirm={() => onKill(r)}>
+                <Button size="small" danger>
+                  结束
+                </Button>
+              </Popconfirm>
+              <Popconfirm title={`确定重启进程 ${r.name || r.pid}？`} okText="重启" cancelText="取消" onConfirm={() => onRestart(r)}>
+                <Button size="small">重启</Button>
+              </Popconfirm>
+            </>
+          )}
+        </Space>
       ),
     },
   ]

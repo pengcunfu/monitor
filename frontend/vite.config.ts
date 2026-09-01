@@ -7,9 +7,9 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // 开发期代理到 Go 后端
-      '/api': { target: 'http://localhost:8080', changeOrigin: true },
-      '/ws': { target: 'ws://localhost:8080', ws: true },
+      // 开发期代理到 Go 后端。前端实时大屏通过 /api/v1/ws 建立 WebSocket，
+      // 必须开启 ws:true 才能代理 upgrade 握手（否则实时数据收不到）。
+      '/api': { target: 'http://localhost:8080', changeOrigin: true, ws: true },
     },
   },
   build: {

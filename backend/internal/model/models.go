@@ -137,6 +137,7 @@ type ServiceState struct {
 	ActiveState string `gorm:"size:32" json:"active_state"`
 	SubState    string `gorm:"size:32" json:"sub_state"`
 	IsActive    bool   `json:"is_active"`
+	Enabled     bool   `gorm:"default:false" json:"enabled"` // 开机自启（systemd enabled / Windows AUTO_START）
 	MainPID     int32  `gorm:"column:main_pid" json:"main_pid"`
 	ExitCode    int32  `json:"exit_code"`
 }
